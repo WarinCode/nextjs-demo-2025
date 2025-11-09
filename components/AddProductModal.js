@@ -32,7 +32,6 @@ const AddProductModal = ({ modal, handleToggle }) => {
       title: productNameRef.current,
       price: productPriceRef.current,
     };
-    console.log(payload);
 
     try {
       const response = await fetch("https://dummyjson.com/products/add", {
@@ -41,10 +40,12 @@ const AddProductModal = ({ modal, handleToggle }) => {
         body: JSON.stringify(payload),
       });
       const data = await response.json();
-      console.log(data);
-      alert("Product added successfully!");
+      if (response.ok && data){
+        alert("Product added successfully!");
+      }
       handleToggle();
     } catch (err) {
+      alert(err?.message);
       console.error(err?.message);
     }
   }, []);

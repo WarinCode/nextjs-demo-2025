@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { v4 as uuid } from "uuid";
-import { Alert } from "reactstrap";
 import Header from "../components/Header";
 import FormComponent from "@/components/FormComponent";
 import ProductCard from "@/components/ProductCard";
@@ -10,9 +9,7 @@ import Loading from "@/components/Loading";
 
 export default function Home() {
   const [products, setProducts] = useState([]);
-  const [search, setSearch] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [search, setSearch] = useState(null);
   const [loading, setLoading] = useState(false);
   const searchRef = useRef(null);
 
@@ -24,15 +21,14 @@ export default function Home() {
       const data = await response.json();
       if (response.ok) {
         setProducts(data.products);
-        // console.log(data);
-        setLoading(false);
       } else {
         throw new Error("Failed");
       }
     } catch (err) {
-      setIsError(true);
-      setErrorMessage(err?.message);
       console.error(err?.message);
+      alert(err?.message);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -45,7 +41,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // console.log(search);
     if (search) {
       searchRef.current = search;
     }
@@ -61,10 +56,10 @@ export default function Home() {
       );
       const data = await response.json();
       setProducts(data.products);
-      setLoading(false);
-      // console.log(data);
     } catch (e) {
       console.log(e?.message);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -74,9 +69,6 @@ export default function Home() {
 
   return (
     <div>
-      <Alert color="danger" isOpen={isError}>
-        {errorMessage}
-      </Alert>
       <Header />
       <FormComponent handleChange={handleChange} handleSubmit={handleSubmit} />
       <div>
